@@ -22,11 +22,6 @@ var statisticsManager = {
             this.checkHighScore(this.score)
         }
 
-        // let current_user = localStorage.getItem("current_user")
-        // let current_score = Number(localStorage.getItem(String(current_user)))
-        //
-        // localStorage.setItem(localStorage.getItem("current_user"), String(Math.max(current_score, maybe_record)))
-
         if (success) {
             this.finished = 'win';
             this.availableLevel = Math.min(Math.max(this.availableLevel, this.curLevel + 1), this.levels.length-1);
@@ -41,13 +36,16 @@ var statisticsManager = {
         this.redraw();
     },
     saveHighScore(score, highScores) {
-        highScores.push(score);
+        let check_score = highScores.findIndex((obj1, obj2) => obj1.name === obj2.name);
 
-        console.log(highScores[0])
+        if (check_score !== -1) {
+            highScores[check_score].score = score.score;
+        }
+        else {
+            highScores.push(score);
+        }
 
         highScores.sort((a, b) => b.score - a.score);
-
-        console.log(highScores);
 
         localStorage.setItem('leaders', JSON.stringify(highScores));
     },
@@ -59,8 +57,6 @@ var statisticsManager = {
         if (score > lowestScore) {
             const name = localStorage.getItem("user");
             const newScore = { score, name };
-            console.log(newScore)
-            console.log(highScores)
             this.saveHighScore(newScore, highScores);
             this.showHighScores();
         }
@@ -69,9 +65,6 @@ var statisticsManager = {
     showHighScores() {
         const highScores = JSON.parse(localStorage.getItem('leaders'));
         const highScoreList = document.getElementById('leaders');
-
-        console.log(highScoreList)
-        console.log(highScores)
 
         highScoreList.innerHTML = highScores
             .map((score) => `<li>${score.score} - ${score.name}`)
@@ -137,18 +130,7 @@ var statisticsManager = {
 
         ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-        let records = []
-        for (let a in localStorage) {
-            if (localStorage.getItem(a) != null) {
-                if (a !== "level" && a !== "user" && a !== "score") {
-                    records.push([a, localStorage.getItem(a)])
-                }
-            }
-        }
-
-        records.sort(function(first, second) {
-            return Number(second[1]) - Number(first[1]);
-        });
+        this.showHighScores();
 
     }
 };
