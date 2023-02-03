@@ -15,7 +15,7 @@ var statisticsManager = {
     min_score: 0,
 
     init() {
-        localStorage.setItem('leaders', [null]);
+        localStorage.setItem('leaders', JSON.stringify([]));
     },
 
     finish(success) {
