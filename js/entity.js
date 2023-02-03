@@ -17,7 +17,7 @@ var Entity = {
 var Player = Entity.extend({
     size_x: 64,
     size_y: 64,
-    lifetime: 100000,
+    lifetime: 1000,
     move_x: 0,
     move_y: 1,
     speed: 3,

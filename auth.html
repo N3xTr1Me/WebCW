@@ -4,18 +4,21 @@
     <meta charset="utf-8">
     <script src="auth.js" charset="utf-8"></script>
     <link rel="stylesheet" href="auth.css">
-    <title> Log in </title>
+    <title> Authorisation </title>
 </head>
 <body>
-<div class="form">
-    <h2 id="header">Игра Apocalypse</h2>
-    <form action="index.html" method="get" id="form">
-        <label>
-            <input id="user" placeholder="Никнейм"><br>
-        </label>
-        <button id="button" name="button" onclick="store()">Играть
-        </button>
+<section class="auth">
+    <h1>Tanchiki</h1>
+    <h3>Please enter your nickname</h3>
+    <form class="form" action="index.html" method="get" id="form">
+        <div class="form-item">
+            <input id="user" type="text" required />
+        </div>
+        <div class="form-submit">
+            <button id="button" name="button" onclick="store()">
+                Play
+            </button>
+        </div>
     </form>
-</div>
+</section>
 </body>
-</html>

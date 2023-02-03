@@ -136,10 +136,6 @@ var mapManager = {
             }
         }
     },
-    getTilesetIdxceil: function(x, y) {
-        let idx = Math.ceil(y / this.tSize.y) * this.xCount + Math.ceil(x / this.tSize.x);
-        return this.tLayer.data[idx];
-    },
     getTilesetIdx: function(x, y) {
         let idx = Math.floor(y / this.tSize.y) * this.xCount + Math.floor(x / this.tSize.x);
         return this.tLayer.data[idx];

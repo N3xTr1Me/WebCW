@@ -1,3 +1,5 @@
+let level1 = 1;
+
 var statisticsManager = {
     kills: 0,
     levels: [
@@ -5,19 +7,25 @@ var statisticsManager = {
         "/map1.json"
     ],
     curLevel: 0,
-    availableLevel: 0,
+    availableLevel: 1,
     finished: false,
     lifetime: 0,
     damage: 0,
+    score: 0,
+    min_score: 0,
 
     finish(success) {
 
-        let maybe_record = Number(this.lifetime)
+        if (this.curLevel) {
+            this.curLevel = 0;
+            this.score += this.lifetime;
+            this.checkHighScore(this.score)
+        }
 
-        let current_user = localStorage.getItem("current_user")
-        let current_score = Number(localStorage.getItem(String(current_user)))
-
-        localStorage.setItem(localStorage.getItem("current_user"), String(Math.max(current_score, maybe_record)))
+        // let current_user = localStorage.getItem("current_user")
+        // let current_score = Number(localStorage.getItem(String(current_user)))
+        //
+        // localStorage.setItem(localStorage.getItem("current_user"), String(Math.max(current_score, maybe_record)))
 
         if (success) {
             this.finished = 'win';
@@ -32,6 +40,44 @@ var statisticsManager = {
         this.kills++;
         this.redraw();
     },
+    saveHighScore(score, highScores) {
+        highScores.push(score);
+
+        console.log(highScores[0])
+
+        highScores.sort((a, b) => b.score - a.score);
+
+        console.log(highScores);
+
+        localStorage.setItem('leaders', JSON.stringify(highScores));
+    },
+
+    checkHighScore(score) {
+        const highScores = JSON.parse(localStorage.getItem('leaders'));
+        const lowestScore = highScores[this.min_score - 1]?.score ?? 0;
+
+        if (score > lowestScore) {
+            const name = localStorage.getItem("user");
+            const newScore = { score, name };
+            console.log(newScore)
+            console.log(highScores)
+            this.saveHighScore(newScore, highScores);
+            this.showHighScores();
+        }
+    },
+
+    showHighScores() {
+        const highScores = JSON.parse(localStorage.getItem('leaders'));
+        const highScoreList = document.getElementById('leaders');
+
+        console.log(highScoreList)
+        console.log(highScores)
+
+        highScoreList.innerHTML = highScores
+            .map((score) => `<li>${score.score} - ${score.name}`)
+            .join('');
+    },
+
     checkoutPlayer(player) {
         if (!player)
             return;
@@ -89,20 +135,16 @@ var statisticsManager = {
         prevLevelButton.disabled = !(this.curLevel > 0);
         nextLevelButton.disabled = !(this.curLevel < this.availableLevel);
 
-
-
         ctx.clearRect(0, 0, canvas.width, canvas.height)
 
         let records = []
         for (let a in localStorage) {
             if (localStorage.getItem(a) != null) {
-                if (a !== "level" && a !== "current_user" && a !== "score") {
+                if (a !== "level" && a !== "user" && a !== "score") {
                     records.push([a, localStorage.getItem(a)])
                 }
             }
         }
-
-        console.log(records);
 
         records.sort(function(first, second) {
             return Number(second[1]) - Number(first[1]);
