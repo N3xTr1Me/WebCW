@@ -219,7 +219,7 @@
         {
          "columns":6,
          "firstgid":1,
-         "image":"/resources\/tileset.png",
+         "image":"resources\/tileset.png",
          "imageheight":64,
          "imagewidth":384,
          "margin":0,
