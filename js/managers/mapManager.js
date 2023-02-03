@@ -140,6 +140,9 @@ var mapManager = {
         let idx = Math.floor(y / this.tSize.y) * this.xCount + Math.floor(x / this.tSize.x);
         return this.tLayer.data[idx];
     },
+    isWall: function (tile) {
+        return tile >= 5;
+    },
     centerAt: function(x, y) {
         if (x < this.view.w / 2)
             this.view.x = 0;

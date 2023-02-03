@@ -1,3 +1,5 @@
+let level1 = 1;
+
 var statisticsManager = {
     kills: 0,
     levels: [
@@ -5,12 +7,21 @@ var statisticsManager = {
         "/map1.json"
     ],
     curLevel: 0,
-    availableLevel: 0,
+    availableLevel: 1,
     finished: false,
     lifetime: 0,
     damage: 0,
+    score: 0,
+    min_score: 0,
 
     finish(success) {
+
+        if (this.curLevel) {
+            this.curLevel = 0;
+            this.score += this.lifetime;
+            this.checkHighScore(this.score)
+        }
+
         if (success) {
             this.finished = 'win';
             this.availableLevel = Math.min(Math.max(this.availableLevel, this.curLevel + 1), this.levels.length-1);
@@ -24,6 +35,42 @@ var statisticsManager = {
         this.kills++;
         this.redraw();
     },
+    saveHighScore(score, highScores) {
+        let check_score = highScores.findIndex((obj1, obj2) => obj1.name === obj2.name);
+
+        if (check_score !== -1) {
+            highScores[check_score].score = score.score;
+        }
+        else {
+            highScores.push(score);
+        }
+
+        highScores.sort((a, b) => b.score - a.score);
+
+        localStorage.setItem('leaders', JSON.stringify(highScores));
+    },
+
+    checkHighScore(score) {
+        const highScores = JSON.parse(localStorage.getItem('leaders'));
+        const lowestScore = highScores[this.min_score - 1]?.score ?? 0;
+
+        if (score > lowestScore) {
+            const name = localStorage.getItem("user");
+            const newScore = { score, name };
+            this.saveHighScore(newScore, highScores);
+            this.showHighScores();
+        }
+    },
+
+    showHighScores() {
+        const highScores = JSON.parse(localStorage.getItem('leaders'));
+        const highScoreList = document.getElementById('leaders');
+
+        highScoreList.innerHTML = highScores
+            .map((score) => `<li>${score.score} - ${score.name}`)
+            .join('');
+    },
+
     checkoutPlayer(player) {
         if (!player)
             return;
@@ -80,5 +127,10 @@ var statisticsManager = {
 
         prevLevelButton.disabled = !(this.curLevel > 0);
         nextLevelButton.disabled = !(this.curLevel < this.availableLevel);
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        this.showHighScores();
+
     }
 };

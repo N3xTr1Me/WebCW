@@ -7,23 +7,24 @@ var physicManager = {
         let newX = obj.pos_x + Math.floor(obj.move_x * obj.speed);
         let newY = obj.pos_y + Math.floor(obj.move_y * obj.speed);
 
-        let ts = mapManager.getTilesetIdx(newX + obj.size_x / 2, newY + obj.size_y / 2)
-            || mapManager.getTilesetIdx(newX + obj.size_x, newY)
-            || mapManager.getTilesetIdx(newX + obj.size_x, newY + obj.size_y)
-            || mapManager.getTilesetIdx(newX, newY + obj.size_y);
+        let ts = Math.max(mapManager.getTilesetIdx(newX, newY),
+             mapManager.getTilesetIdx(newX + obj.size_x, newY),
+             mapManager.getTilesetIdx(newX + obj.size_x, newY + obj.size_y),
+             mapManager.getTilesetIdx(newX, newY + obj.size_y)
+        );
 
-        let e = this.entityAtXY(obj, newX, newY);
+        let encounter = this.entityAtXY(obj, newX, newY);
 
-        if (e && obj.ignoreEntity && obj.ignoreEntity(e))
-            e = null;
+        if (encounter && obj.ignoreEntity && obj.ignoreEntity(encounter))
+            encounter = null;
 
-        if (e && obj.onTouchEntity)
-            obj.onTouchEntity(e);
+        if (encounter && obj.onTouchEntity)
+            obj.onTouchEntity(encounter);
 
         if (ts >= 5 && obj.onTouchMap)
             obj.onTouchMap();
 
-        if (ts < 5 && !e) {
+        if (ts < 5 && !encounter) {
             obj.pos_x = newX;
             obj.pos_y = newY;
         } else {
