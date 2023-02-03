@@ -7,12 +7,16 @@ var statisticsManager = {
         "/map1.json"
     ],
     curLevel: 0,
-    availableLevel: 1,
+    availableLevel: 0,
     finished: false,
     lifetime: 0,
     damage: 0,
     score: 0,
     min_score: 0,
+
+    init() {
+        localStorage.setItem('leaders', [null]);
+    },
 
     finish(success) {
 
@@ -51,7 +55,13 @@ var statisticsManager = {
     },
 
     checkHighScore(score) {
-        const highScores = JSON.parse(localStorage.getItem('leaders'));
+        let highScores = []
+        try {
+            highScores = JSON.parse(localStorage.getItem('leaders'));
+        }
+        catch (any) {
+            highScores = [];
+        }
         const lowestScore = highScores[this.min_score - 1]?.score ?? 0;
 
         if (score > lowestScore) {
@@ -63,8 +73,8 @@ var statisticsManager = {
     },
 
     showHighScores() {
-        const highScores = JSON.parse(localStorage.getItem('leaders'));
-        const highScoreList = document.getElementById('leaders');
+        const highScores = JSON.parse(localStorage.getItem('leaders')) || [];
+        const highScoreList = document.getElementById('leaders') || [];
 
         highScoreList.innerHTML = highScores
             .map((score) => `<li>${score.score} - ${score.name}`)
