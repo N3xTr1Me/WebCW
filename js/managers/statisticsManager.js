@@ -11,6 +11,14 @@ var statisticsManager = {
     damage: 0,
 
     finish(success) {
+
+        let maybe_record = Number(this.lifetime)
+
+        let current_user = localStorage.getItem("current_user")
+        let current_score = Number(localStorage.getItem(String(current_user)))
+
+        localStorage.setItem(localStorage.getItem("current_user"), String(Math.max(current_score, maybe_record)))
+
         if (success) {
             this.finished = 'win';
             this.availableLevel = Math.min(Math.max(this.availableLevel, this.curLevel + 1), this.levels.length-1);
@@ -80,5 +88,25 @@ var statisticsManager = {
 
         prevLevelButton.disabled = !(this.curLevel > 0);
         nextLevelButton.disabled = !(this.curLevel < this.availableLevel);
+
+
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height)
+
+        let records = []
+        for (let a in localStorage) {
+            if (localStorage.getItem(a) != null) {
+                if (a !== "level" && a !== "current_user" && a !== "score") {
+                    records.push([a, localStorage.getItem(a)])
+                }
+            }
+        }
+
+        console.log(records);
+
+        records.sort(function(first, second) {
+            return Number(second[1]) - Number(first[1]);
+        });
+
     }
 };

@@ -26,7 +26,7 @@ var gameManager = {
                     e.update()
                 }
             }  catch (exception) {
-                console.error(exception);
+                // console.error(exception);
             }
         });
 
